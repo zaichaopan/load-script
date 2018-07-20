@@ -1,10 +1,6 @@
-const {
-    normalizeOptions,
-    stringifyParams,
-    addScript,
-    load,
-    addFakeAddScript
-} = require('../index')
+jest.unmock('../index');
+const loadScript = require('../index')
+const { normalizeOptions, stringifyParams, load } = loadScript
 
 test('it can normalize options', () => {
     ;['src', 'callbackName', 'resolve'].forEach(key => {
@@ -30,59 +26,70 @@ test('it can stringify params', () => {
     }
     let str = stringifyParams(params)
     let expectedStr = 'library=place&key=abc'
+
     expect(str).toEqual(expectedStr)
 })
 
 test('it can add script', () => {
+    let { addScript } = loadScript
     let src = 'http://www.google.com'
     let str = 'callback=initMap'
-
     addScript(src, str)
-    let scripts = document.scripts;
+    let scripts = document.scripts
     let expectedScript = src + "?" + str
+
     expect(scripts.length).toEqual(1)
     expect(document.scripts[0].script).toEqual(expectedScript)
 })
 
-test('it can resolve after add script', () => {
+test('it can resolve after add script', async () => {
     let options = getValidOptions()
-    let googleObj = {}
-    addFakeAddScript(fakeAddScriptImplementation(options, googleObj))
-    return load(options).then(data => {
-        expect(data).toBe(googleObj);
-    });
-
+    let resolvedValue = {}
+    expect.assertions(1)
+    mockAddScript(options, resolvedValue)
+    let data = await load(options)
+    expect(data).toBe(resolvedValue)
 })
 
-test('it will not resolve same lib if it has been resolved', () => {
-    let options = getValidOptions()
-    addFakeAddScript(fakeAddScriptImplementation(options))
-    expect.assertions(1)
-    return load(options).then(data => {
-        let resolved = data
-        return load(options).then(data => {
-            expect(data).toBe(resolved)
-        })
-    })
+test('it can resolve multiple libs', async () => {
+    let libOne = 'http://www.lib1.comp/api'
+    let options = getValidOptions({ src: libOne })
+    let resolvedValue = {}
+    mockAddScript(options, resolvedValue)
+
+    expect.assertions(2)
+
+    let data = await load(options)
+    expect(data).toBe(resolvedValue)
+
+    let libTwo = 'http://www.lib2.comp/api'
+    options = getValidOptions({ src: libTwo })
+    let anotherResolvedVal = {}
+    mockAddScript(options, anotherResolvedVal)
+    data = await load(options)
+
+    expect(data).toBe(anotherResolvedVal)
 })
 
-test('it can resolve multiple libs', () => {
-    let options = getValidOptions()
-    addFakeAddScript(fakeAddScriptImplementation(options))
-    expect.assertions(1)
-    return load(options).then(data => {
-        let resolved = data
-        options.src = 'http://www.google.auth.api'
-        return load(options).then(data => {
-            expect(data).not.toBe(resolved)
-        })
-    })
+test('it will not resolve same lib if it has been resolved', async () => {
+    let src = 'http://www.googlemap/api'
+    let options = getValidOptions({ src })
+    let resolvedValue = {}
+    mockAddScript(options, resolvedValue)
+
+    expect.assertions(2)
+    let data = await load(options)
+    expect(data).toBe(resolvedValue)
+    data = await load(options)
+    expect(data).toBe(resolvedValue)
 })
 
 test('it will throw appropriate error is after timeout ', () => {
     let options = getValidOptions()
-    // override default time out(10s)
-    options.timeout = 2000
+    // override default timeout as 1s
+    options.timeout = 1000
+    // wait until 2s to resolve
+    mockAddScript(options, {}, 2000)
     return load(options)
         .catch(e => {
             expect.assertions(1)
@@ -90,18 +97,24 @@ test('it will throw appropriate error is after timeout ', () => {
         })
 })
 
-function fakeAddScriptImplementation(options, resolve = {}) {
-    return (src, str) => {
+function mockAddScript(options, resolvedValue = {}, timeout = 1000) {
+    loadScript.addScript = jest.fn((src, str) => {
         setTimeout(() => {
-            window[options.resolve] = resolve
+            window[options.resolve] = resolvedValue
             window[src]()
-        }, 1000)
+        }, timeout)
+    })
+}
+
+function getValidOptions(options = {}) {
+    let src = options.src || 'https://www.example.com' + randomString()
+    return {
+        src,
+        callbackName: options.callbackName || 'callback',
+        resolve: options.resolve || 'google'
     }
 }
-function getValidOptions() {
-    return {
-        src: 'https://www.example.com',
-        callbackName: 'callback',
-        resolve: 'google'
-    }
+
+function randomString() {
+    return Math.random().toString(36).substring(2)
 }

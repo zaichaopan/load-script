@@ -22,14 +22,7 @@ function load(options = {}) {
 
             options.params[options.callbackName] = identifier;
             var str = stringifyParams(options.params)
-
-            // use for test
-            if (fakeAddScript) {
-                fakeAddScript(options.src, str)
-                return
-            }
-
-            addScript(options.src, str)
+            exports.addScript(options.src, str)
         })
     }
 
@@ -54,19 +47,13 @@ function stringifyParams(params) {
 }
 
 function addScript(src, str) {
+    console.log('add script gets called')
     var scriptElement = document.createElement('script')
     scriptElement.script = src + '?' + str
     document.body.appendChild(scriptElement)
 }
 
-function addFakeAddScript(fn) {
-    fakeAddScript = fn
-}
-
-module.exports = {
-    load,
-    stringifyParams,
-    normalizeOptions,
-    addScript,
-    addFakeAddScript
-}
+exports.load = load
+exports.stringifyParams = stringifyParams
+exports.normalizeOptions = normalizeOptions
+exports.addScript = addScript
