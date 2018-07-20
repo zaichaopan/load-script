@@ -47,7 +47,6 @@ function stringifyParams(params) {
 }
 
 function addScript(src, str) {
-    console.log('add script gets called')
     var scriptElement = document.createElement('script')
     scriptElement.script = src + '?' + str
     document.body.appendChild(scriptElement)

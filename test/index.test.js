@@ -13,20 +13,15 @@ test('it can normalize options', () => {
     let options = getValidOptions()
     normalizeOptions(options)
     expect(options.params).toEqual({})
-
     options.params = { key: 'abc' }
     normalizeOptions(options)
     expect(options.params).toEqual({ key: 'abc' })
 })
 
 test('it can stringify params', () => {
-    let params = {
-        library: 'place',
-        key: 'abc'
-    }
+    let params = { library: 'place', key: 'abc' }
     let str = stringifyParams(params)
     let expectedStr = 'library=place&key=abc'
-
     expect(str).toEqual(expectedStr)
 })
 
@@ -37,7 +32,6 @@ test('it can add script', () => {
     addScript(src, str)
     let scripts = document.scripts
     let expectedScript = src + "?" + str
-
     expect(scripts.length).toEqual(1)
     expect(document.scripts[0].script).toEqual(expectedScript)
 })
@@ -56,12 +50,9 @@ test('it can resolve multiple libs', async () => {
     let options = getValidOptions({ src: libOne })
     let resolvedValue = {}
     mockAddScript(options, resolvedValue)
-
     expect.assertions(2)
-
     let data = await load(options)
     expect(data).toBe(resolvedValue)
-
     let libTwo = 'http://www.lib2.comp/api'
     options = getValidOptions({ src: libTwo })
     let anotherResolvedVal = {}
@@ -76,7 +67,6 @@ test('it will not resolve same lib if it has been resolved', async () => {
     let options = getValidOptions({ src })
     let resolvedValue = {}
     mockAddScript(options, resolvedValue)
-
     expect.assertions(2)
     let data = await load(options)
     expect(data).toBe(resolvedValue)
