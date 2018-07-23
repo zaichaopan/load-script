@@ -1,10 +1,19 @@
 {
-  "name": "load-script",
-  "version": "1.0.0",
-  "description": "",
+  "name": "@zaichaopan/load-script",
+  "version": "0.1.0",
+  "description": "A helper for loading script and returning a promise.",
   "main": "index.js",
+  "keywords": [
+    "javascript",
+    "promise",
+    "module"
+  ],
   "scripts": {
     "test": "jest ./test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zaichaopan/load-script.git"
   },
   "author": "zaichaopan@gmail.com",
   "license": "MIT",
