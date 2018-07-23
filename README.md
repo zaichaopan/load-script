@@ -1,16 +1,39 @@
 # Load Script
 
-__This project is still under development.__
-
-This small helper can help you load scripts like [Google Map Api](https://developers.google.com/maps/documentation/javascript/tutorial), [Google OAuth Api](https://developers.google.com/api-client-library/javascript/samples/samples#authorizing-and-making-authorized-requests) to your client side javascript. So you don't have to specify a global callback in the script src which will get called after the script is fully loaded. It is inspired by [load-google-maps-api](https://github.com/yuanqing/load-google-maps-api).
+Load script into client javascript and returns a promise
 
 ## Usage
+
+This thin helper can help you load scripts like [Google Map Api](https://developers.google.com/maps/documentation/javascript/tutorial), [Google OAuth Api](https://developers.google.com/api-client-library/javascript/samples/samples#authorizing-and-making-authorized-requests) to your client side javascript. So you don't have to specify a global callback in the script src which will get called after the script is fully loaded. It is inspired by [load-google-maps-api](https://github.com/yuanqing/load-google-maps-api).
+
+### Installation
+
+```bash
+npm install --save @zaichaopan/load-script
+```
+
+### Import helper
+
+```js
+import { load } from '@zaichaopan/load-script'
+
+```
+
+Now use method __load__ to load the script you want. This method takes an object as parameter. This object should contain 3 required properties.
+
+- __src__: a string to specify the script you want to load
+- __callbackName__: a string to specify the name that the script will use to look for callback function name when it finished loading
+- __resolve__: a string to specify the name of property that the script will assign the resolved value to.
+
+If the script requires more parameters, like google map api requires key and libraries name. You can add assign them to a property called __params__, along with required properties: src, callbackName and resolve.
+
+
 
 ### Examples
 
 #### Google Map Api
 
-To use google map, you have to do do
+To use google map, you have to do
 
 __Before:__
 
@@ -28,12 +51,12 @@ __Before:__
   </body>
 ```
 
-It sucks when you want to use it your individual React or Vue components. With this help you can
+It sucks when you want to use it your individual React or Vue components. With this helper you can
 
 __After:__
 
 ```js
-import {load} from '@zaichaopan/load-script'
+import { load } from '@zaichaopan/load-script'
 
 let map;
 
@@ -53,7 +76,7 @@ load({
 #### Google OAuth Api
 
 ```js
-import {load} from '@zaichaopan/load-script'
+import { load } from '@zaichaopan/load-script'
 
 let gapi
 
