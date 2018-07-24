@@ -33,7 +33,7 @@ test('it can add script', () => {
     let scripts = document.scripts
     let expectedScript = src + "?" + str
     expect(scripts.length).toEqual(1)
-    expect(document.scripts[0].script).toEqual(expectedScript)
+    expect(document.scripts[0].src).toEqual(expectedScript)
 })
 
 test('it can resolve after add script', async () => {

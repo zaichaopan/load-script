@@ -1,12 +1,9 @@
 var promiseObj = {};
 var defaultTimeout = 10000
-var fakeAddScript
 
 function load(options = {}) {
     normalizeOptions(options)
-
-    var identifier = options.src
-
+    var identifier = options.src.replace(/(:\/{2})|\.|\//g, '')
     if (promiseObj[identifier] === undefined) {
         promiseObj[identifier] = new Promise(function (resolve, reject) {
             var timeoutId = setTimeout(function () {
@@ -16,7 +13,8 @@ function load(options = {}) {
 
             window[identifier] = function () {
                 if (timeoutId !== null) clearTimeout(timeoutId)
-                resolve(window[options.resolve])
+                var result = window[options.resolve]
+                resolve(result)
                 delete window[identifier]
             }
 
@@ -25,7 +23,6 @@ function load(options = {}) {
             exports.addScript(options.src, str)
         })
     }
-
     return promiseObj[identifier]
 }
 
@@ -48,7 +45,7 @@ function stringifyParams(params) {
 
 function addScript(src, str) {
     var scriptElement = document.createElement('script')
-    scriptElement.script = src + '?' + str
+    scriptElement.src = src + '?' + str
     document.body.appendChild(scriptElement)
 }
 
