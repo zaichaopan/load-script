@@ -27,8 +27,6 @@ Now use method __load__ to load the script you want. This method takes an object
 
 If the script requires more parameters, like google map api requires key and libraries name. You can add assign them to a property called __params__, along with required properties: src, callbackName and resolve.
 
-
-
 ### Examples
 
 #### Google Map Api
@@ -63,7 +61,7 @@ let map;
 load({
     src: 'https://maps.googleapis.com/maps/api/js',
     callbackName: 'callback',
-    resolve: 'google'
+    resolve: 'google',
     params: {
      key: your_app_key,
      libraries: 'places'
@@ -72,6 +70,10 @@ load({
     map = new google.maps.map(//...)
 })
 ```
+
+__Note__:
+
+After a script is loaded and resolve the value, the value will be cached. So it will not load the script twice.
 
 #### Google OAuth Api
 
@@ -83,10 +85,9 @@ let gapi
 load({
     src: 'https://apis.google.com/js/platform.js',
     callbackName: 'onload',
-    resolve: 'gapi'
+    resolve: 'gapi',
 }).then(googleGapi => {
     gapi = googleGapi
     //...
 })
-
 ```
