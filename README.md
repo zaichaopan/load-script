@@ -1,6 +1,6 @@
 # Load Script
 
-Load script into client javascript and returns a promise
+Load script into client side javascript and returns a promise
 
 ## Usage
 
