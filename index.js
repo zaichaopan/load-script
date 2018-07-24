@@ -3,7 +3,7 @@ var defaultTimeout = 10000
 
 function load(options = {}) {
     normalizeOptions(options)
-    var identifier = options.src.replace(/(:\/{2})|\.|\//g, '')
+    var identifier = getIdentifier(options.src)
     if (promiseObj[identifier] === undefined) {
         promiseObj[identifier] = new Promise(function (resolve, reject) {
             var timeoutId = setTimeout(function () {
@@ -49,7 +49,12 @@ function addScript(src, str) {
     document.body.appendChild(scriptElement)
 }
 
+function getIdentifier(src) {
+    return src.replace(/(:\/{2})|\.|\//g, '')
+}
+
 exports.load = load
 exports.stringifyParams = stringifyParams
 exports.normalizeOptions = normalizeOptions
 exports.addScript = addScript
+exports.getIdentifier = getIdentifier

@@ -1,6 +1,6 @@
 jest.unmock('../index');
 const loadScript = require('../index')
-const { normalizeOptions, stringifyParams, load } = loadScript
+const { normalizeOptions, stringifyParams, load, getIdentifier } = loadScript
 
 test('it can normalize options', () => {
     ;['src', 'callbackName', 'resolve'].forEach(key => {
@@ -27,12 +27,13 @@ test('it can stringify params', () => {
 
 test('it can add script', () => {
     let { addScript } = loadScript
-    let src = 'http://www.google.com'
+    let src = 'http://www.google.com/api/js'
     let str = 'callback=initMap'
     addScript(src, str)
     let scripts = document.scripts
     let expectedScript = src + "?" + str
     expect(scripts.length).toEqual(1)
+    console.log(document.scripts[0].src)
     expect(document.scripts[0].src).toEqual(expectedScript)
 })
 
@@ -89,9 +90,10 @@ test('it will throw appropriate error is after timeout ', () => {
 
 function mockAddScript(options, resolvedValue = {}, timeout = 1000) {
     loadScript.addScript = jest.fn((src, str) => {
+        let identifier = getIdentifier(src)
         setTimeout(() => {
             window[options.resolve] = resolvedValue
-            window[src]()
+            window[identifier]()
         }, timeout)
     })
 }

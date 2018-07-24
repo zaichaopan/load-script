@@ -1,6 +1,6 @@
 {
   "name": "@zaichaopan/load-script",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A helper for loading script and returning a promise.",
   "main": "index.js",
   "keywords": [
